@@ -1,0 +1,53 @@
+name: "API: Test"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15.2
+        env:
+          POSTGRES_USER: nsg-tool-test
+          POSTGRES_PASSWORD: nsg-tool-test
+          POSTGRES_DB: nsg-tool-test
+        ports:
+        - 5432/tcp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 32768
+
+    defaults:
+      run:
+        working-directory: ./apps/api
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.6'
+      
+      - uses: yezz123/setup-uv@v4
+
+      - run: uv sync   
+      
+      - run: source .venv/bin/activate && pytest
