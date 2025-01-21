@@ -9,6 +9,7 @@ dependencies = [
     "django-ninja>=1.3.0",
     "ninja-extended",
     "psycopg2-binary>=2.9.10",
+    "pydantic-settings>=2.7.1",
 ]
 
 [tool.uv.sources]
