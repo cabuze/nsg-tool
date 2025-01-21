@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:15.2
+    container_name: nsg-tool-dev-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=nsg-tool-dev
+      - POSTGRES_PASSWORD=nsg-tool-dev
+      - POSTGRES_DB=nsg-tool-dev
+    ports:
+      - 5432:5432
+    volumes:
+      - nsg-tool-dev-postgres-data:/var/lib/postgresql/data
+  
+  db_test:
+    image: postgres:15.2
+    container_name: nsg-tool-test-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=nsg-tool-test
+      - POSTGRES_PASSWORD=nsg-tool-test
+      - POSTGRES_DB=nsg-tool-test
+    ports:
+      - 32768:5432
+    volumes:
+      - nsg-tool-test-postgres-data:/var/lib/postgresql/data
+
+  # adminer:
+  #   image: adminer:4.8.1
+  #   container_name: nsg-tool-dev-adminer
+  #   restart: always
+  #   ports:
+  #     - 8001:8080
+  #   depends_on:
+  #     - db
+
+volumes:
+  nsg-tool-dev-postgres-data:
+  nsg-tool-test-postgres-data:
