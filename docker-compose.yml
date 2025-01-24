@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   db:
@@ -13,7 +13,7 @@ services:
       - 5432:5432
     volumes:
       - nsg-tool-dev-postgres-data:/var/lib/postgresql/data
-  
+
   db_test:
     image: postgres:15.2
     container_name: nsg-tool-test-postgres
@@ -27,14 +27,17 @@ services:
     volumes:
       - nsg-tool-test-postgres-data:/var/lib/postgresql/data
 
-  # adminer:
-  #   image: adminer:4.8.1
-  #   container_name: nsg-tool-dev-adminer
-  #   restart: always
-  #   ports:
-  #     - 8001:8080
-  #   depends_on:
-  #     - db
+  pgadmin:
+    image: dpage/pgadmin4:8.14.0
+    container_name: nsg-tool-dev-pgadmin
+    restart: always
+    ports:
+      - 8002:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@user.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    depends_on:
+      - db
 
 volumes:
   nsg-tool-dev-postgres-data:

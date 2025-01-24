@@ -4,7 +4,7 @@ from core.config import settings
 from core.settings_common import *  # noqa: F403
 
 SECRET_KEY = settings.secret_key.get_secret_value()
-DEBUG = settings.debug
+DEBUG = True
 ALLOWED_HOSTS = settings.allowed_hosts
 
 DATABASES = {
@@ -17,3 +17,7 @@ DATABASES = {
         "PORT": settings.database_port,
     }
 }
+
+CORS_ALLOWED_ORIGINS = settings.cors_allowed_origins
+CORS_TRUSTED_ORIGINS = settings.cors_trusted_origins
+CSRF_TRUSTED_ORIGINS = settings.csrf_trusted_origins

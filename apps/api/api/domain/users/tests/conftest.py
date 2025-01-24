@@ -2,7 +2,10 @@
 
 import pytest
 from django.db.models import Field
+from ninja_extended.api import ExtendedRouter
 
+from api.domain.users.api import users_router
+from api.domain.users.factory import UserFactory
 from api.domain.users.model import User, UserManager
 
 
@@ -41,3 +44,24 @@ def field(model, request) -> Field:
     field_name = request.param
 
     return model._meta.get_field(field_name=field_name)  # noqa: SLF001
+
+
+@pytest.fixture
+def router() -> ExtendedRouter:
+    """Fixture for router."""
+
+    return users_router
+
+
+@pytest.fixture
+def user() -> User:
+    """Fixture for user."""
+
+    return UserFactory.create()
+
+
+@pytest.fixture
+def users() -> User:
+    """Fixture for user."""
+
+    return UserFactory.create_batch(size=10)
