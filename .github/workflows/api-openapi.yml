@@ -27,6 +27,8 @@ jobs:
 
       - uses: yezz123/setup-uv@v4
 
+      - run: uv sync
+
       - name: Check if openapi.json exists
         run: |
           if [ ! -f "openapi.json" ]; then   
@@ -37,7 +39,7 @@ jobs:
           fi
 
       - name: Generate openapi.json
-        run: python manage.py generate_openapi --directory ./generated
+        run: source .venv/bin/activate && python manage.py generate_openapi --directory ./generated
 
       - name: Check that openapi.json is up to date
         run: |
