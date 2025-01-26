@@ -1,0 +1,25 @@
+name: "API: Format Sort Composite"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  setup:
+    uses: cabuze/nsg-tool/.github/workflows/python-uv.yaml@main
+    with:
+      python-version: "3.12.8"
+      uv-version: "0.5.21"
+  main:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/api
+    steps:
+      - run: source .venv/bin/activate && ruff check --select I .

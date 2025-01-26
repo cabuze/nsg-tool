@@ -1,19 +1,21 @@
 name: Python with uv
+
 on:
-  workflow_call:
-    inputs:
-      python-version:
-        required: true
-        type: string
-      uv-version:
-        required: true
-        type: string
-jobs:
-  setup:
-    runs-on: ubuntu-latest
-  defaults:
-    run:
-      working-directory: ./apps/api
+  push:
+    branches:
+      - main
+  pull_request:
+
+inputs:
+  python-version:
+    required: true
+    default: "3.12.8"
+  uv-version:
+    required: true
+    default: "0.5.21"
+
+runs:
+  using: "composite"
   steps:
     - name: Checkout
       uses: actions/checkout@v4
