@@ -8,7 +8,7 @@ from ninja_extended.api import ExtendedRouter, response_factory
 from ninja_extended.errors import AuthenticationError, AuthorizationError, CSRFError
 
 from api.auth.errors import InvalidCredentialsError
-from api.auth.schemas import LoginRequestSchema, LoginResponseSchema, LogoutResponseSchema, MeResponseSchema
+from api.auth.schemas import LoginRequest, LoginResponse, LogoutResponse, MeResponse
 
 auth_router = ExtendedRouter(tags=["auth"])
 
@@ -31,10 +31,10 @@ def csrf_handler(request: HttpRequest):  # noqa: ARG001
     path="/login",
     operation_id="login",
     summary="Login an user",
-    response=response_factory((200, LoginResponseSchema), InvalidCredentialsError, CSRFError),
+    response=response_factory((200, LoginResponse), InvalidCredentialsError, CSRFError),
     auth=None,
 )
-def login_handler(request: HttpRequest, data: LoginRequestSchema):
+def login_handler(request: HttpRequest, data: LoginRequest):
     """Login an user route handler."""
 
     if check_csrf(request=request):
@@ -53,7 +53,7 @@ def login_handler(request: HttpRequest, data: LoginRequestSchema):
     path="logout",
     operation_id="logout",
     summary="Logout a user",
-    response=response_factory((200, LogoutResponseSchema), AuthenticationError, AuthorizationError, CSRFError),
+    response=response_factory((200, LogoutResponse), AuthenticationError, AuthorizationError, CSRFError),
 )
 def logout_handler(request: HttpRequest):
     """Logout an user route handler."""
@@ -67,7 +67,7 @@ def logout_handler(request: HttpRequest):
     "me",
     operation_id="me",
     summary="Get the logged in user",
-    response=response_factory((200, MeResponseSchema), AuthenticationError, AuthorizationError),
+    response=response_factory((200, MeResponse), AuthenticationError, AuthorizationError),
 )
 def me_handler(request: HttpRequest):
     """Get logged in user route handler."""

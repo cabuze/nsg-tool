@@ -13,7 +13,7 @@ from api.domain.users.errors import (
     UserUniqueConstraintError,
 )
 from api.domain.users.model import User
-from api.domain.users.schemas import UserCreateSchema, UserDeleteResponseSchema, UserResponseSchema, UserUpdateSchema
+from api.domain.users.schemas import UserCreateRequest, UserDeleteResponse, UserResponse, UserUpdateRequest
 
 users_router = ExtendedRouter(tags=["users"])
 
@@ -22,7 +22,7 @@ users_router = ExtendedRouter(tags=["users"])
     path="/",
     operation_id="listUsers",
     summary="List users",
-    response=response_factory((200, list[UserResponseSchema]), AuthenticationError, AuthorizationError),
+    response=response_factory((200, list[UserResponse]), AuthenticationError, AuthorizationError),
 )
 def list_users(request: HttpRequest):  # noqa: ARG001
     """List users route handler."""
@@ -35,7 +35,7 @@ def list_users(request: HttpRequest):  # noqa: ARG001
     operation_id="getUserById",
     summary="Get user by id",
     response=response_factory(
-        (200, UserResponseSchema),
+        (200, UserResponse),
         AuthenticationError,
         AuthorizationError,
         UserNotFoundError,
@@ -53,7 +53,7 @@ def get_user_by_id(request: HttpRequest, id: int):  # noqa: ARG001, A002
     operation_id="createUser",
     summary="Create user",
     response=response_factory(
-        (201, UserResponseSchema),
+        (201, UserResponse),
         AuthenticationError,
         AuthorizationError,
         UserCheckConstraintError,
@@ -61,7 +61,7 @@ def get_user_by_id(request: HttpRequest, id: int):  # noqa: ARG001, A002
         UserUniqueConstraintError,
     ),
 )
-def create_user(request: HttpRequest, data: UserCreateSchema):  # noqa: ARG001
+def create_user(request: HttpRequest, data: UserCreateRequest):  # noqa: ARG001
     """Create user route handler."""
 
     return 201, User.objects.create_user(**data.dict())
@@ -72,7 +72,7 @@ def create_user(request: HttpRequest, data: UserCreateSchema):  # noqa: ARG001
     operation_id="updateUser",
     summary="Update user",
     response=response_factory(
-        (200, UserResponseSchema),
+        (200, UserResponse),
         AuthenticationError,
         AuthorizationError,
         UserNotFoundError,
@@ -82,7 +82,7 @@ def create_user(request: HttpRequest, data: UserCreateSchema):  # noqa: ARG001
         UserUniqueConstraintError,
     ),
 )
-def update_user(request: HttpRequest, id: int, data: UserUpdateSchema):  # noqa: ARG001, A002
+def update_user(request: HttpRequest, id: int, data: UserUpdateRequest):  # noqa: ARG001, A002
     """Update user route handler."""
 
     return 200, User.objects.update_user_by_id(id=id, **data.dict(exclude_unset=True))
@@ -93,7 +93,7 @@ def update_user(request: HttpRequest, id: int, data: UserUpdateSchema):  # noqa:
     operation_id="deleteUser",
     summary="Delete user",
     response=response_factory(
-        (204, UserDeleteResponseSchema),
+        (204, UserDeleteResponse),
         AuthenticationError,
         AuthorizationError,
         UserNotFoundError,

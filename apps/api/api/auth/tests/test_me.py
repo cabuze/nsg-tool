@@ -11,7 +11,7 @@ from ninja_extended.api.utils import get_operation_from_router_by_operation_id, 
 from ninja_extended.errors import AuthenticationError, AuthorizationError
 
 from api.auth.api import auth_router
-from api.auth.schemas import MeResponseSchema
+from api.auth.schemas import MeResponse
 from api.domain.users.model import User
 
 
@@ -45,7 +45,7 @@ def test_me_response_schemas(router: ExtendedRouter, operation_id: str):
     assert is_response_registered_in_operation(
         api_or_router=router,
         operation_id=operation_id,
-        response=(200, MeResponseSchema),
+        response=(200, MeResponse),
     )
     assert is_response_registered_in_operation(
         api_or_router=auth_router,

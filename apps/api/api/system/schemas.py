@@ -16,13 +16,13 @@ class SystemDescriptionFieldValues:
     description = StringFieldValues(description="The API description.")
 
 
-class SystemVersionSchema(Schema):
+class SystemVersionResponse(Schema):
     """System version schema."""
 
     version: str = StringField(field_values=SystemVersionFieldValues.version)
 
 
-class SystemDescriptionSchema(Schema):
+class SystemDescriptionResponse(Schema):
     """System description schema."""
 
     description: str = StringField(field_values=SystemDescriptionFieldValues.description)

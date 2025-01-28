@@ -8,7 +8,7 @@ from ninja_extended.api import ExtendedRouter
 from ninja_extended.api.utils import get_operation_from_router_by_operation_id, is_response_registered_in_operation
 from ninja_extended.errors import AuthenticationError, AuthorizationError
 
-from api.domain.users.schemas import UserResponseSchema
+from api.domain.users.schemas import UserResponse
 
 
 @pytest.fixture
@@ -34,7 +34,7 @@ def test_list_users_response_schemas(router: ExtendedRouter, operation_id: str):
     assert is_response_registered_in_operation(
         api_or_router=router,
         operation_id=operation_id,
-        response=(200, list[UserResponseSchema]),
+        response=(200, list[UserResponse]),
     )
     assert is_response_registered_in_operation(
         api_or_router=router,

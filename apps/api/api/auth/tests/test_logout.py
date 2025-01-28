@@ -11,7 +11,7 @@ from ninja_extended.api import ExtendedRouter
 from ninja_extended.api.utils import get_operation_from_router_by_operation_id, is_response_registered_in_operation
 from ninja_extended.errors import AuthenticationError, AuthorizationError, CSRFError
 
-from api.auth.schemas import LogoutResponseSchema
+from api.auth.schemas import LogoutResponse
 from api.domain.users.model import User
 
 
@@ -45,7 +45,7 @@ def test_logout_response_schemas(router: ExtendedRouter, operation_id: str):
     assert is_response_registered_in_operation(
         api_or_router=router,
         operation_id=operation_id,
-        response=(200, LogoutResponseSchema),
+        response=(200, LogoutResponse),
     )
     assert is_response_registered_in_operation(
         api_or_router=router,

@@ -32,7 +32,7 @@ class UserFieldValues:
     updated_at = DatetimeFieldValues(description="The timestamp of the last update of the user.")
 
 
-class UserCreateSchema(BaseSchema):
+class UserCreateRequest(BaseSchema):
     """User create schema."""
 
     display_name: str = StringField(field_values=UserFieldValues.display_name)
@@ -43,7 +43,7 @@ class UserCreateSchema(BaseSchema):
     is_superuser: bool = BoolField(field_values=UserFieldValues.is_superuser, default=False)
 
 
-class UserUpdateSchema(BaseSchema):
+class UserUpdateRequest(BaseSchema):
     """User update schema."""
 
     display_name: str | None = StringField(field_values=UserFieldValues.display_name, default=None)
@@ -54,7 +54,7 @@ class UserUpdateSchema(BaseSchema):
     is_superuser: bool | None = BoolField(field_values=UserFieldValues.is_superuser, default=None)
 
 
-class UserResponseSchema(BaseSchema):
+class UserResponse(BaseSchema):
     """User response schema."""
 
     id: int = IntField(field_values=UserFieldValues.id)
@@ -68,5 +68,5 @@ class UserResponseSchema(BaseSchema):
     updated_at: Datetime = DatetimeField(field_values=UserFieldValues.updated_at)
 
 
-class UserDeleteResponseSchema(BaseSchema):
+class UserDeleteResponse(BaseSchema):
     """User delete response schema."""

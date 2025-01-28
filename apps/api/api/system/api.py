@@ -3,7 +3,7 @@
 from django.http import HttpRequest
 from ninja_extended.api import ExtendedRouter, response_factory
 
-from api.system.schemas import SystemDescriptionSchema, SystemVersionSchema
+from api.system.schemas import SystemDescriptionResponse, SystemVersionResponse
 from utils import get_package_description, get_package_version
 
 system_router = ExtendedRouter(tags=["system"])
@@ -13,7 +13,7 @@ system_router = ExtendedRouter(tags=["system"])
     "version",
     operation_id="getVersion",
     summary="Get the API version",
-    response=response_factory((200, SystemVersionSchema)),
+    response=response_factory((200, SystemVersionResponse)),
 )
 def version(request: HttpRequest):  # noqa: ARG001
     """Get the API version."""
@@ -27,7 +27,7 @@ def version(request: HttpRequest):  # noqa: ARG001
     "description",
     operation_id="getDescription",
     summary="Get the API description",
-    response=response_factory((200, SystemDescriptionSchema)),
+    response=response_factory((200, SystemDescriptionResponse)),
 )
 def description(request: HttpRequest):  # noqa: ARG001
     """Get the API description."""

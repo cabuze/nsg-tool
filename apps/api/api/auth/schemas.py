@@ -4,7 +4,7 @@ from typing import Literal
 
 from ninja_extended.fields import EmailField, EmailFieldValues, StringField, StringFieldValues
 
-from api.domain.users.schemas import UserResponseSchema
+from api.domain.users.schemas import UserResponse
 from schemas import BaseSchema
 
 
@@ -15,14 +15,14 @@ class LoginFieldValues:
     password = StringFieldValues(description="The password of the user.")
 
 
-class LoginRequestSchema(BaseSchema):
+class LoginRequest(BaseSchema):
     """Login request schema."""
 
     email: str = EmailField(field_values=LoginFieldValues.email)
     password: str = StringField(field_values=LoginFieldValues.password)
 
 
-class LoginResponseSchema(UserResponseSchema):
+class LoginResponse(UserResponse):
     """Login response schema."""
 
 
@@ -32,11 +32,11 @@ class LogoutFieldValues:
     message = StringFieldValues(description="The message of the logout response.", strict=None)
 
 
-class LogoutResponseSchema(BaseSchema):
+class LogoutResponse(BaseSchema):
     """Logout response schema."""
 
     message: Literal["Logout successful"] = StringField(field_values=LogoutFieldValues.message)
 
 
-class MeResponseSchema(UserResponseSchema):
+class MeResponse(UserResponse):
     """Me response schema."""

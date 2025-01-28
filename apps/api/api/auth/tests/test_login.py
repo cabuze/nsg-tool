@@ -12,7 +12,7 @@ from ninja_extended.api.utils import get_operation_from_router_by_operation_id, 
 from ninja_extended.errors import CSRFError
 
 from api.auth.errors import InvalidCredentialsError
-from api.auth.schemas import LoginRequestSchema, LoginResponseSchema
+from api.auth.schemas import LoginRequest, LoginResponse
 from api.domain.users.model import User
 
 
@@ -37,7 +37,7 @@ def test_login_request_schemas(router: ExtendedRouter, operation_id: str):
     handler_specs = getfullargspec(operation.view_func)
 
     assert handler_specs.args == ["request", "data"]
-    assert handler_specs.annotations == {"request": HttpRequest, "data": LoginRequestSchema}
+    assert handler_specs.annotations == {"request": HttpRequest, "data": LoginRequest}
 
 
 def test_login_response_schemas(router: ExtendedRouter, operation_id: str):
@@ -46,7 +46,7 @@ def test_login_response_schemas(router: ExtendedRouter, operation_id: str):
     assert is_response_registered_in_operation(
         api_or_router=router,
         operation_id=operation_id,
-        response=(200, LoginResponseSchema),
+        response=(200, LoginResponse),
     )
     assert is_response_registered_in_operation(
         api_or_router=router,
