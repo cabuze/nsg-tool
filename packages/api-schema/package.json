@@ -1,0 +1,39 @@
+{
+  "name": "api-schema",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/api-schema.umd.cjs",
+  "module": "./dist/api-schema.js",
+  "exports": {
+    ".": {
+      "import": "./dist/api-schema.js",
+      "require": "./dist/api-schema.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "generate": "kubb --config kubb.config.js"
+  },
+  "devDependencies": {
+    "@kubb/cli": "^3.5.6",
+    "@kubb/core": "^3.5.6",
+    "@kubb/plugin-client": "^3.5.6",
+    "@kubb/plugin-oas": "^3.5.6",
+    "@kubb/plugin-ts": "^3.5.6",
+    "@kubb/plugin-zod": "^3.5.6",
+    "prettier": "^3.4.2",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.5.0",
+    "zod": "^3.24.1"
+  }
+}
