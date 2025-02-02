@@ -1,8 +1,11 @@
 """Module api.domain.users.api."""
 
 from django.http import HttpRequest
+from ninja import Query
+from ninja.pagination import paginate
 from ninja_extended.api import ExtendedRouter, response_factory
-from ninja_extended.errors import AuthenticationError, AuthorizationError
+from ninja_extended.errors import AuthenticationError, AuthorizationError, CSRFError
+from ninja_extended.pagination import PageNumberPageSizePagination
 
 from api.domain.users.errors import (
     MultipleUsersReturnedError,
@@ -13,21 +16,54 @@ from api.domain.users.errors import (
     UserUniqueConstraintError,
 )
 from api.domain.users.model import User
-from api.domain.users.schemas import UserCreateRequest, UserDeleteResponse, UserResponse, UserUpdateRequest
+from api.domain.users.schemas import (
+    UserCreateRequest,
+    UserDeleteResponse,
+    UserFitlerSchema,
+    UserResponse,
+    UserSelectResponse,
+    UserSortSchema,
+    UserUpdateRequest,
+)
 
 users_router = ExtendedRouter(tags=["users"])
 
 
 @users_router.get(
-    path="/",
+    path="",
     operation_id="listUsers",
     summary="List users",
-    response=response_factory((200, list[UserResponse]), AuthenticationError, AuthorizationError),
+    response=response_factory(
+        (200, list[UserResponse]),
+        AuthenticationError,
+        AuthorizationError,
+    ),
 )
-def list_users(request: HttpRequest):  # noqa: ARG001
+@paginate(PageNumberPageSizePagination)
+def list_users(request: HttpRequest, filters: UserFitlerSchema = Query(...), sort: UserSortSchema = Query(...)):  # noqa: ARG001, B008
     """List users route handler."""
 
-    return 200, User.objects.list_users()
+    users = User.objects.list_users()
+
+    users = filters.filter(queryset=users)
+
+    return sort.sort(queryset=users)
+
+
+@users_router.get(
+    path="/selection",
+    operation_id="selectUser",
+    summary="User selection list",
+    response=response_factory(
+        (200, list[UserSelectResponse]),
+        AuthenticationError,
+        AuthorizationError,
+    ),
+)
+def selection_list_users(request: HttpRequest):  # noqa: ARG001
+    """List users route handler."""
+
+    return 200, User.objects.selection_list()
 
 
 @users_router.get(
@@ -56,6 +92,7 @@ def get_user_by_id(request: HttpRequest, id: int):  # noqa: ARG001, A002
         (201, UserResponse),
         AuthenticationError,
         AuthorizationError,
+        CSRFError,
         UserCheckConstraintError,
         UserNotNullConstraintError,
         UserUniqueConstraintError,
@@ -75,6 +112,7 @@ def create_user(request: HttpRequest, data: UserCreateRequest):  # noqa: ARG001
         (200, UserResponse),
         AuthenticationError,
         AuthorizationError,
+        CSRFError,
         UserNotFoundError,
         MultipleUsersReturnedError,
         UserCheckConstraintError,
@@ -96,6 +134,7 @@ def update_user(request: HttpRequest, id: int, data: UserUpdateRequest):  # noqa
         (204, UserDeleteResponse),
         AuthenticationError,
         AuthorizationError,
+        CSRFError,
         UserNotFoundError,
         MultipleUsersReturnedError,
         UserProtectedError,

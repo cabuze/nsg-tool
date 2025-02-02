@@ -2,13 +2,16 @@
 
 import json
 from http import HTTPStatus
-from inspect import getfullargspec
 
 import pytest
 from django.http import HttpRequest
 from django.test import Client
 from ninja_extended.api import ExtendedRouter
-from ninja_extended.api.utils import get_operation_from_router_by_operation_id, is_response_registered_in_operation
+from ninja_extended.api.utils import (
+    get_full_arg_spec,
+    get_operation_from_router_by_operation_id,
+    is_response_registered_in_operation,
+)
 from ninja_extended.errors import AuthenticationError, AuthorizationError, CSRFError
 
 from api.auth.schemas import LogoutResponse
@@ -33,7 +36,7 @@ def test_logout_request_schemas(router: ExtendedRouter, operation_id: str):
     """Test logout request schemas."""
 
     operation = get_operation_from_router_by_operation_id(router=router, operation_id=operation_id)
-    handler_specs = getfullargspec(operation.view_func)
+    handler_specs = get_full_arg_spec(operation.view_func)
 
     assert handler_specs.args == ["request"]
     assert handler_specs.annotations == {"request": HttpRequest}

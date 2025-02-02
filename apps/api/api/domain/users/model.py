@@ -35,7 +35,12 @@ class UserManager(BaseUserManager["User"]):
     def list_users(self) -> QuerySet["User"]:
         """List users."""
 
-        return self.get_queryset().all()
+        return self.get_queryset().order_by("id")
+
+    def selection_list(self) -> QuerySet:
+        """Generate selection list for users."""
+
+        return self.get_queryset().only("id", "email", "display_name").order_by("email")
 
     def get_user_by_id(self, id: int) -> "User":  # noqa: A002
         """Get user by id."""

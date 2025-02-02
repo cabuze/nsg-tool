@@ -33,7 +33,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponseSchema"
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
@@ -67,7 +67,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginRequestSchema"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           },
@@ -86,7 +86,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LogoutResponseSchema"
+                  "$ref": "#/components/schemas/LogoutResponse"
                 }
               }
             }
@@ -149,7 +149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MeResponseSchema"
+                  "$ref": "#/components/schemas/MeResponse"
                 }
               }
             }
@@ -186,10 +186,184 @@
         ]
       }
     },
-    "/api/users/": {
+    "/api/users": {
       "get": {
         "operationId": "listUsers",
         "summary": "List users",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by the email of the user.",
+              "q": "email__icontains",
+              "title": "Email"
+            },
+            "required": false,
+            "description": "Filter by the email of the user."
+          },
+          {
+            "in": "query",
+            "name": "display_name",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by the display name of the user.",
+              "q": "display_name__icontains",
+              "title": "Display Name"
+            },
+            "required": false,
+            "description": "Filter by the display name of the user."
+          },
+          {
+            "in": "query",
+            "name": "is_active",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by the is active of the user.",
+              "title": "Is Active"
+            },
+            "required": false,
+            "description": "Filter by the is active of the user."
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by the email or display name of the user.",
+              "q": [
+                "email__icontains",
+                "display_name__icontains"
+              ],
+              "title": "Search"
+            },
+            "required": false,
+            "description": "Filter by the email or display name of the user."
+          },
+          {
+            "in": "query",
+            "name": "ordering",
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/components/schemas/UserSortableFieldsEnum"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Sort by email, display_name or timestamp of creation of the user.",
+              "title": "Ordering"
+            },
+            "required": false,
+            "description": "Sort by email, display_name or timestamp of creation of the user."
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "description": "The page number.",
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "required": false,
+            "description": "The page number."
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "default": 100,
+              "description": "The page size.",
+              "minimum": 1,
+              "title": "Page Size",
+              "type": "integer"
+            },
+            "required": false,
+            "description": "The page size."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedUserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "List users route handler.",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/selection": {
+      "get": {
+        "operationId": "selectUser",
+        "summary": "User selection list",
         "parameters": [],
         "responses": {
           "200": {
@@ -198,7 +372,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/UserResponseSchema"
+                    "$ref": "#/components/schemas/UserSelectResponse"
                   },
                   "title": "Response",
                   "type": "array"
@@ -236,91 +410,6 @@
             "SessionAuth": []
           }
         ]
-      },
-      "post": {
-        "operationId": "createUser",
-        "summary": "Create user",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponseSchema"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthenticationErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthorizationErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "discriminator": {
-                    "mapping": {
-                      "errors/check-constraint": "#/components/schemas/CheckConstraintErrorResponse",
-                      "errors/not-null-constraint": "#/components/schemas/NotNullConstraintErrorResponse",
-                      "errors/unique-constraint": "#/components/schemas/UniqueConstraintErrorResponse"
-                    },
-                    "propertyName": "type"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/CheckConstraintErrorResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/NotNullConstraintErrorResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/UniqueConstraintErrorResponse"
-                    }
-                  ],
-                  "title": "Response"
-                }
-              }
-            }
-          }
-        },
-        "description": "Create user route handler.",
-        "tags": [
-          "users"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserCreateSchema"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "SessionAuth": []
-          }
-        ]
       }
     },
     "/api/users/{id}": {
@@ -344,7 +433,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseSchema"
+                  "$ref": "#/components/schemas/UserResponse"
                 }
               }
             }
@@ -420,7 +509,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseSchema"
+                  "$ref": "#/components/schemas/UserResponse"
                 }
               }
             }
@@ -440,7 +529,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthorizationErrorResponse"
+                  "discriminator": {
+                    "mapping": {
+                      "errors/authorization": "#/components/schemas/AuthorizationErrorResponse",
+                      "errors/csrf": "#/components/schemas/CSRFErrorResponse"
+                    },
+                    "propertyName": "type"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AuthorizationErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CSRFErrorResponse"
+                    }
+                  ],
+                  "title": "Response"
                 }
               }
             }
@@ -497,7 +601,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserUpdateSchema"
+                "$ref": "#/components/schemas/UserUpdateRequest"
               }
             }
           },
@@ -529,7 +633,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDeleteResponseSchema"
+                  "$ref": "#/components/schemas/UserDeleteResponse"
                 }
               }
             }
@@ -549,7 +653,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthorizationErrorResponse"
+                  "discriminator": {
+                    "mapping": {
+                      "errors/authorization": "#/components/schemas/AuthorizationErrorResponse",
+                      "errors/csrf": "#/components/schemas/CSRFErrorResponse"
+                    },
+                    "propertyName": "type"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AuthorizationErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CSRFErrorResponse"
+                    }
+                  ],
+                  "title": "Response"
                 }
               }
             }
@@ -601,6 +720,108 @@
         ]
       }
     },
+    "/api/users/": {
+      "post": {
+        "operationId": "createUser",
+        "summary": "Create user",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "discriminator": {
+                    "mapping": {
+                      "errors/authorization": "#/components/schemas/AuthorizationErrorResponse",
+                      "errors/csrf": "#/components/schemas/CSRFErrorResponse"
+                    },
+                    "propertyName": "type"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AuthorizationErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CSRFErrorResponse"
+                    }
+                  ],
+                  "title": "Response"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "discriminator": {
+                    "mapping": {
+                      "errors/check-constraint": "#/components/schemas/CheckConstraintErrorResponse",
+                      "errors/not-null-constraint": "#/components/schemas/NotNullConstraintErrorResponse",
+                      "errors/unique-constraint": "#/components/schemas/UniqueConstraintErrorResponse"
+                    },
+                    "propertyName": "type"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CheckConstraintErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotNullConstraintErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/UniqueConstraintErrorResponse"
+                    }
+                  ],
+                  "title": "Response"
+                }
+              }
+            }
+          }
+        },
+        "description": "Create user route handler.",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    },
     "/api/system/version": {
       "get": {
         "operationId": "getVersion",
@@ -612,7 +833,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SystemVersionSchema"
+                  "$ref": "#/components/schemas/SystemVersionResponse"
                 }
               }
             }
@@ -640,7 +861,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SystemDescriptionSchema"
+                  "$ref": "#/components/schemas/SystemDescriptionResponse"
                 }
               }
             }
@@ -660,7 +881,7 @@
   },
   "components": {
     "schemas": {
-      "LoginResponseSchema": {
+      "LoginResponse": {
         "additionalProperties": false,
         "description": "Login response schema.",
         "properties": {
@@ -735,7 +956,7 @@
           "created_at",
           "updated_at"
         ],
-        "title": "LoginResponseSchema",
+        "title": "LoginResponse",
         "type": "object"
       },
       "InvalidCredentialsErrorResponse": {
@@ -805,7 +1026,7 @@
         "title": "CSRFErrorResponse",
         "type": "object"
       },
-      "LoginRequestSchema": {
+      "LoginRequest": {
         "additionalProperties": false,
         "description": "Login request schema.",
         "properties": {
@@ -827,10 +1048,10 @@
           "email",
           "password"
         ],
-        "title": "LoginRequestSchema",
+        "title": "LoginRequest",
         "type": "object"
       },
-      "LogoutResponseSchema": {
+      "LogoutResponse": {
         "additionalProperties": false,
         "description": "Logout response schema.",
         "properties": {
@@ -847,7 +1068,7 @@
         "required": [
           "message"
         ],
-        "title": "LogoutResponseSchema",
+        "title": "LogoutResponse",
         "type": "object"
       },
       "AuthenticationErrorResponse": {
@@ -920,7 +1141,7 @@
         "title": "AuthorizationErrorResponse",
         "type": "object"
       },
-      "MeResponseSchema": {
+      "MeResponse": {
         "additionalProperties": false,
         "description": "Me response schema.",
         "properties": {
@@ -995,10 +1216,206 @@
           "created_at",
           "updated_at"
         ],
-        "title": "MeResponseSchema",
+        "title": "MeResponse",
         "type": "object"
       },
-      "UserResponseSchema": {
+      "PageNumberPageSizePaginationInput": {
+        "description": "Input for PageNumberPagination.",
+        "properties": {
+          "page": {
+            "default": 1,
+            "description": "The page number.",
+            "minimum": 1,
+            "title": "Page",
+            "type": "integer"
+          },
+          "page_size": {
+            "default": 100,
+            "description": "The page size.",
+            "minimum": 1,
+            "title": "Page Size",
+            "type": "integer"
+          }
+        },
+        "title": "PageNumberPageSizePaginationInput",
+        "type": "object"
+      },
+      "UserFitlerSchema": {
+        "description": "User filter schema.",
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by the email of the user.",
+            "q": "email__icontains",
+            "title": "Email"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by the display name of the user.",
+            "q": "display_name__icontains",
+            "title": "Display Name"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by the is active of the user.",
+            "title": "Is Active"
+          },
+          "search": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by the email or display name of the user.",
+            "q": [
+              "email__icontains",
+              "display_name__icontains"
+            ],
+            "title": "Search"
+          }
+        },
+        "title": "UserFitlerSchema",
+        "type": "object"
+      },
+      "UserSortSchema": {
+        "description": "User sort schema.",
+        "properties": {
+          "ordering": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/UserSortableFieldsEnum"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sort by email, display_name or timestamp of creation of the user.",
+            "title": "Ordering"
+          }
+        },
+        "title": "UserSortSchema",
+        "type": "object"
+      },
+      "UserSortableFieldsEnum": {
+        "description": "User sortable fields enum.",
+        "enum": [
+          "email_asc",
+          "email_desc",
+          "display_name_asc",
+          "display_name_desc",
+          "created_at_asc",
+          "created_at_desc"
+        ],
+        "title": "UserSortableFieldsEnum",
+        "type": "string"
+      },
+      "PagedUserResponse": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "current_page": {
+            "title": "Current Page",
+            "type": "integer"
+          },
+          "pages": {
+            "title": "Pages",
+            "type": "integer"
+          },
+          "previous_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Page"
+          },
+          "next_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Page"
+          },
+          "previous_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Url"
+          },
+          "next_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "count",
+          "current_page",
+          "pages",
+          "previous_page",
+          "next_page",
+          "previous_url",
+          "next_url",
+          "items"
+        ],
+        "title": "PagedUserResponse",
+        "type": "object"
+      },
+      "UserResponse": {
         "additionalProperties": false,
         "description": "User response schema.",
         "properties": {
@@ -1073,7 +1490,159 @@
           "created_at",
           "updated_at"
         ],
-        "title": "UserResponseSchema",
+        "title": "UserResponse",
+        "type": "object"
+      },
+      "UserSelectResponse": {
+        "additionalProperties": false,
+        "description": "User selection response schema.",
+        "properties": {
+          "id": {
+            "description": "The id of the user.",
+            "title": "Id",
+            "type": "integer"
+          },
+          "display_name": {
+            "description": "The display name of the user.",
+            "strip_whitespace": null,
+            "title": "Display Name",
+            "to_lower": null,
+            "to_upper": null,
+            "type": "string"
+          },
+          "email": {
+            "description": "The email of the user.",
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "display_name",
+          "email"
+        ],
+        "title": "UserSelectResponse",
+        "type": "object"
+      },
+      "NotFoundErrorResponse": {
+        "description": "NotFound error response class.",
+        "properties": {
+          "type": {
+            "const": "errors/not-found",
+            "title": "Type",
+            "type": "string"
+          },
+          "status": {
+            "const": 404,
+            "title": "Status",
+            "type": "integer"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Fields",
+            "type": "object"
+          }
+        },
+        "required": [
+          "type",
+          "status",
+          "path",
+          "operation_id",
+          "resource",
+          "fields"
+        ],
+        "title": "NotFoundErrorResponse",
+        "type": "object"
+      },
+      "MultipleObjectsReturnedErrorResponse": {
+        "description": "MultipleObjectsReturned error response class.",
+        "properties": {
+          "type": {
+            "const": "errors/multiple-objects-returned",
+            "title": "Type",
+            "type": "string"
+          },
+          "status": {
+            "const": 422,
+            "title": "Status",
+            "type": "integer"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Fields",
+            "type": "object"
+          }
+        },
+        "required": [
+          "type",
+          "status",
+          "path",
+          "operation_id",
+          "resource",
+          "fields"
+        ],
+        "title": "MultipleObjectsReturnedErrorResponse",
         "type": "object"
       },
       "CheckConstraintErrorResponse": {
@@ -1232,180 +1801,7 @@
         "title": "UniqueConstraintErrorResponse",
         "type": "object"
       },
-      "UserCreateSchema": {
-        "additionalProperties": false,
-        "description": "User create schema.",
-        "properties": {
-          "display_name": {
-            "description": "The display name of the user.",
-            "strip_whitespace": null,
-            "title": "Display Name",
-            "to_lower": null,
-            "to_upper": null,
-            "type": "string"
-          },
-          "email": {
-            "description": "The email of the user.",
-            "format": "email",
-            "title": "Email",
-            "type": "string"
-          },
-          "password": {
-            "description": "The password of the user.",
-            "strip_whitespace": null,
-            "title": "Password",
-            "to_lower": null,
-            "to_upper": null,
-            "type": "string"
-          },
-          "is_active": {
-            "default": true,
-            "description": "The is active status of the user.",
-            "title": "Is Active",
-            "type": "boolean"
-          },
-          "is_staff": {
-            "default": false,
-            "description": "The is staff status of the user.",
-            "title": "Is Staff",
-            "type": "boolean"
-          },
-          "is_superuser": {
-            "default": false,
-            "description": "The is superuser status of the user.",
-            "title": "Is Superuser",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "display_name",
-          "email",
-          "password"
-        ],
-        "title": "UserCreateSchema",
-        "type": "object"
-      },
-      "NotFoundErrorResponse": {
-        "description": "NotFound error response class.",
-        "properties": {
-          "type": {
-            "const": "errors/not-found",
-            "title": "Type",
-            "type": "string"
-          },
-          "status": {
-            "const": 404,
-            "title": "Status",
-            "type": "integer"
-          },
-          "path": {
-            "title": "Path",
-            "type": "string"
-          },
-          "operation_id": {
-            "title": "Operation Id",
-            "type": "string"
-          },
-          "resource": {
-            "title": "Resource",
-            "type": "string"
-          },
-          "fields": {
-            "additionalProperties": {
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "title": "Fields",
-            "type": "object"
-          }
-        },
-        "required": [
-          "type",
-          "status",
-          "path",
-          "operation_id",
-          "resource",
-          "fields"
-        ],
-        "title": "NotFoundErrorResponse",
-        "type": "object"
-      },
-      "MultipleObjectsReturnedErrorResponse": {
-        "description": "MultipleObjectsReturned error response class.",
-        "properties": {
-          "type": {
-            "const": "errors/multiple-objects-returned",
-            "title": "Type",
-            "type": "string"
-          },
-          "status": {
-            "const": 422,
-            "title": "Status",
-            "type": "integer"
-          },
-          "path": {
-            "title": "Path",
-            "type": "string"
-          },
-          "operation_id": {
-            "title": "Operation Id",
-            "type": "string"
-          },
-          "resource": {
-            "title": "Resource",
-            "type": "string"
-          },
-          "fields": {
-            "additionalProperties": {
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "title": "Fields",
-            "type": "object"
-          }
-        },
-        "required": [
-          "type",
-          "status",
-          "path",
-          "operation_id",
-          "resource",
-          "fields"
-        ],
-        "title": "MultipleObjectsReturnedErrorResponse",
-        "type": "object"
-      },
-      "UserUpdateSchema": {
+      "UserUpdateRequest": {
         "additionalProperties": false,
         "description": "User update schema.",
         "properties": {
@@ -1489,14 +1885,14 @@
             "title": "Is Superuser"
           }
         },
-        "title": "UserUpdateSchema",
+        "title": "UserUpdateRequest",
         "type": "object"
       },
-      "UserDeleteResponseSchema": {
+      "UserDeleteResponse": {
         "additionalProperties": false,
         "description": "User delete response schema.",
         "properties": {},
-        "title": "UserDeleteResponseSchema",
+        "title": "UserDeleteResponse",
         "type": "object"
       },
       "ProtectedErrorResponse": {
@@ -1546,7 +1942,60 @@
         "title": "ProtectedErrorResponse",
         "type": "object"
       },
-      "SystemVersionSchema": {
+      "UserCreateRequest": {
+        "additionalProperties": false,
+        "description": "User create schema.",
+        "properties": {
+          "display_name": {
+            "description": "The display name of the user.",
+            "strip_whitespace": null,
+            "title": "Display Name",
+            "to_lower": null,
+            "to_upper": null,
+            "type": "string"
+          },
+          "email": {
+            "description": "The email of the user.",
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "description": "The password of the user.",
+            "strip_whitespace": null,
+            "title": "Password",
+            "to_lower": null,
+            "to_upper": null,
+            "type": "string"
+          },
+          "is_active": {
+            "default": true,
+            "description": "The is active status of the user.",
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "is_staff": {
+            "default": false,
+            "description": "The is staff status of the user.",
+            "title": "Is Staff",
+            "type": "boolean"
+          },
+          "is_superuser": {
+            "default": false,
+            "description": "The is superuser status of the user.",
+            "title": "Is Superuser",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "display_name",
+          "email",
+          "password"
+        ],
+        "title": "UserCreateRequest",
+        "type": "object"
+      },
+      "SystemVersionResponse": {
         "description": "System version schema.",
         "properties": {
           "version": {
@@ -1561,10 +2010,10 @@
         "required": [
           "version"
         ],
-        "title": "SystemVersionSchema",
+        "title": "SystemVersionResponse",
         "type": "object"
       },
-      "SystemDescriptionSchema": {
+      "SystemDescriptionResponse": {
         "description": "System description schema.",
         "properties": {
           "description": {
@@ -1579,7 +2028,7 @@
         "required": [
           "description"
         ],
-        "title": "SystemDescriptionSchema",
+        "title": "SystemDescriptionResponse",
         "type": "object"
       }
     },

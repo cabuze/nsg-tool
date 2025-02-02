@@ -1,5 +1,6 @@
 """Module api.domain.users.schemas."""
 
+from ninja.filter_schema import FilterSchema
 from ninja_extended.fields import (
     BoolField,
     BoolFieldValues,
@@ -12,7 +13,8 @@ from ninja_extended.fields import (
     StringField,
     StringFieldValues,
 )
-from pydantic import EmailStr
+from ninja_extended.sorting import SortableFieldsEnum, SortSchema
+from pydantic import EmailStr, Field
 
 from schemas import BaseSchema, Datetime
 
@@ -68,5 +70,44 @@ class UserResponse(BaseSchema):
     updated_at: Datetime = DatetimeField(field_values=UserFieldValues.updated_at)
 
 
+class UserSelectResponse(BaseSchema):
+    """User selection response schema."""
+
+    id: int = IntField(field_values=UserFieldValues.id)
+    display_name: str = StringField(field_values=UserFieldValues.display_name)
+    email: EmailStr = EmailField(field_values=UserFieldValues.email)
+
+
 class UserDeleteResponse(BaseSchema):
     """User delete response schema."""
+
+
+class UserFitlerSchema(FilterSchema):
+    """User filter schema."""
+
+    email: str | None = Field(default=None, q="email__icontains", description="Filter by the email of the user.")
+    display_name: str | None = Field(
+        default=None, q="display_name__icontains", description="Filter by the display name of the user."
+    )
+    is_active: bool | None = Field(default=None, description="Filter by the is active of the user.")
+    search: str | None = Field(
+        default=None,
+        q=["email__icontains", "display_name__icontains"],
+        description="Filter by the email or display name of the user.",
+    )
+
+
+class UserSortableFieldsEnum(SortableFieldsEnum):
+    """User sortable fields enum."""
+
+    email = "email"
+    display_name = "display_name"
+    created_at = "created_at"
+
+
+class UserSortSchema(SortSchema):
+    """User sort schema."""
+
+    ordering: list[UserSortableFieldsEnum] | None = Field(
+        default=None, description="Sort by email, display_name or timestamp of creation of the user."
+    )

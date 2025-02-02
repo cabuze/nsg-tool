@@ -57,11 +57,11 @@ def router() -> ExtendedRouter:
 def user() -> User:
     """Fixture for user."""
 
-    return UserFactory.create()
+    return UserFactory.create(is_active=True, is_staff=False, is_superuser=False)
 
 
 @pytest.fixture
-def users() -> User:
+def users() -> list[User]:
     """Fixture for user."""
 
     return UserFactory.create_batch(size=10)

@@ -179,7 +179,7 @@ wheels = [
 [[package]]
 name = "ninja-extended"
 version = "0.1.0"
-source = { git = "https://github.com/lucas-camp-it-soultions/ninja-extended.git#f959efeb43f9f210e63b78420383136fe21607c4" }
+source = { git = "https://github.com/lucas-camp-it-soultions/ninja-extended.git#0428dbee812f15137f8635b985810ff72dac2bb7" }
 dependencies = [
     { name = "django-ninja" },
     { name = "pydantic", extra = ["email"] },
