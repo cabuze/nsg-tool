@@ -21,7 +21,8 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate": "kubb --config kubb.config.js"
+    "generate": "kubb --config kubb.config.js",
+    "generate:ci": "kubb --config kubb.config.ci.js"
   },
   "devDependencies": {
     "@kubb/cli": "^3.5.6",

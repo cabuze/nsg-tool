@@ -1,0 +1,94 @@
+name: "OpenAPI"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    # defaults:
+    #   run:
+    #     working-directory: ./apps/api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.8"
+
+      - name: Setup uv
+        uses: yezz123/setup-uv@v4
+
+      - name: Install Python dependencies
+        run: cd apps/api && uv sync && cd ../../
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "9.7.1"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.16.0"
+          cache: "pnpm"
+
+      - name: Install Node dependencies
+        run: pnpm install
+
+      - name: Check if apps/api/openapi.json exists
+        run: |
+          if [ ! -f "apps/api/openapi.json" ]; then   
+              echo "apps/api/openapi.json does not exist"
+              exit 1
+          else
+              echo "apps/api/openapi.json exists"
+          fi
+
+      - name: Generate openapi.json
+        run: cd apps/api && source .venv/bin/activate && python manage.py generate_openapi --directory ./generated && cd ../../
+
+      - name: Check that openapi.json is up to date
+        run: |
+          diff -u apps/api/openapi.json apps/api/generated/openapi.json
+          if [ $? -ne 0 ]; then
+              echo "openapi.json is not up to date"
+              exit 1
+          else
+              echo "openapi.json is up to date"
+          fi
+
+      - name: Check if packages/api-schema/src/index.ts exists
+        run: |
+          if [ ! -f "packages/api-schema/src/index.ts" ]; then   
+              echo "packages/api-schema/src/index.ts does not exist"
+              exit 1
+          else
+              echo "packages/api-schema/src/index.ts exists"
+          fi
+
+      - name: Generate api-schema
+        run: cd packages/api-schema && pnpm run generate:ci && cd ../../
+
+      - name: Check that api-schema is up to date
+        run: |
+          diff -u packages/api-schema/src/index.ts packages/api-schema/generated/index.ts
+          if [ $? -ne 0 ]; then
+              echo "api-schema is not up to date"
+              exit 1
+          else
+              echo "api-schema is up to date"
+          fi
