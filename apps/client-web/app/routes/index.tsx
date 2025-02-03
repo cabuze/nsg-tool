@@ -1,13 +1,12 @@
-import * as fs from "node:fs";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
+import * as fs from "node:fs";
+import { Button } from "../components/ui/button";
 
 const filePath = "count.txt";
 
 async function readCount() {
-  return parseInt(
-    await fs.promises.readFile(filePath, "utf-8").catch(() => "0"),
-  );
+  return parseInt(await fs.promises.readFile(filePath, "utf-8").catch(() => "0"));
 }
 
 const getCount = createServerFn({
@@ -33,16 +32,18 @@ function Home() {
   const state = Route.useLoaderData();
 
   return (
-    <button
-      type="button"
-      onClick={() => {
-        void (async () => {
-          await updateCount({ data: 1 });
-          await router.invalidate();
-        })();
-      }}
-    >
-      Add 1 to {state}?
-    </button>
+    <div className="p-2">
+      <h3>Welcome Home!!!</h3>
+      <Button
+        onClick={() => {
+          void (async () => {
+            await updateCount({ data: 1 });
+            await router.invalidate();
+          })();
+        }}
+      >
+        Increment {state} by 1
+      </Button>
+    </div>
   );
 }
